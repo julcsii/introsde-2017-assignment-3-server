@@ -28,14 +28,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import dao.UniversityDao;
+import introsde.assignment3.dao.UniversityDao;
 
 /**
  * The persistent class for the "Person" database table.
  * 
  */
 @Entity
-@Table(name="\"Person\"")
+@Table(name="Person")
 @NamedQuery(name="Person.findAll", query="SELECT p FROM Person p")
 @XmlRootElement(name="person")
 public class Person implements Serializable {
@@ -43,7 +43,7 @@ public class Person implements Serializable {
 
 	@Id
 	@GeneratedValue
-	private int idPerson;
+	private long idPerson;
 	
 	@Column(name="firstname")
 	private String firstname;
@@ -57,7 +57,7 @@ public class Person implements Serializable {
 	
 	
 	@OneToMany(mappedBy="person",cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-	@XmlElementWrapper(name="preferences")
+	//@XmlElementWrapper(name="preferences")
 	private List<Activity> activitypreference;
 	
 	public Person() {
@@ -71,6 +71,20 @@ public class Person implements Serializable {
 		this.birthdate = birthdate;
 		this.activitypreference = activitypreference;
 	}
+	
+	
+	public Person(String firstname, String lastname, Date birthdate) {
+		super();
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.birthdate = birthdate;
+	}
+
+	@Override
+	public String toString() {
+		return "Person [idPerson=" + idPerson + ", firstname=" + firstname + ", lastname=" + lastname + ", birthdate="
+				+ birthdate + ", activitypreference=" + activitypreference + "]";
+	}
 
 
 	public Date getBirthdate() {
@@ -81,11 +95,11 @@ public class Person implements Serializable {
 		this.birthdate = birthdate;
 	}
 
-	public int getIdPerson() {
+	public long getIdPerson() {
 		return this.idPerson;
 	}
 
-	public void setIdPerson(int idPerson) {
+	public void setIdPerson(long idPerson) {
 		this.idPerson = idPerson;
 	}
 
@@ -105,31 +119,31 @@ public class Person implements Serializable {
 		this.firstname = firstname;
 	}
 
-	@XmlTransient
+	//@XmlTransient
 	public List<Activity> getActivityPreferences() {
-	    return activitypreference;
+	    return this.activitypreference;
 	}
 	
+	public void setActivityPreferences(List<Activity> activitypreference) {
+	    this.activitypreference = activitypreference;
+	}
 
-	public List<Activity> getActivitiesWithType(ActivityType type) {
+	public List<Activity> getActivitiesWithType(String type) {
 	    List<Activity> activities = getActivityPreferences();
 	    List<Activity> activitiesWithType = new ArrayList<>();
 	    
 	    for (Activity activity : activities) {
-	    	if (activity.getType().equals(type)) {
+	    	if (activity.getType().getActivityType().equals(type)) {
 	    		activitiesWithType.add(activity);
 	    	}
 	    }
 	    return activitiesWithType;
 	}
 	
-	public void setActivityPreferences(List<Activity> activities) {
-	    this.activitypreference = activities;
-	}
 	
-	public static Person getPersonById(int personId) {
+	public static Person getPersonById(long id) {
 		EntityManager em = UniversityDao.instance.createEntityManager();
-		Person p = em.find(Person.class, personId);
+		Person p = em.find(Person.class, id);
 		UniversityDao.instance.closeConnections(em);
 		return p;
 	}
@@ -149,6 +163,10 @@ public class Person implements Serializable {
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		em.persist(p);
+		for(int i=0;i<p.activitypreference.size();i++) {
+			em.persist(p.activitypreference.get(i));
+		}
+		
 		tx.commit();
 		UniversityDao.instance.closeConnections(em);
 	    return p;
@@ -174,28 +192,27 @@ public class Person implements Serializable {
 	    UniversityDao.instance.closeConnections(em);
 	}
 
-
-	public List<Activity> getActivitiesWithTypeAndId(ActivityType type, int activityId) {
+	
+	public Activity getActivitiesWithId(long activityId) {
 		List<Activity> activities = getActivityPreferences();
-	    List<Activity> activitiesWithTypeAndId = new ArrayList<>();
 	    
 	    for (Activity activity : activities) {
-	    	if (activity.getType().equals(type) && activity.getIdActivity()==activityId) {
-	    		activitiesWithTypeAndId.add(activity);
+	    	if (activity.getIdActivity()==activityId) {
+	    		return activity;
 	    	}
 	    }
-	    return activitiesWithTypeAndId;
+	   return null;
 	}
 
-	
-	public Activity addActivityWithType(ActivityType type, Activity activity) {
+
+	public Activity addActivity(Activity activity) {
 		EntityManager em = UniversityDao.instance.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		List<Activity> origActivities = this.getActivityPreferences();
-		activity.setType(type);
 		origActivities.add(activity);
 		this.setActivityPreferences(origActivities);
+		Activity.saveActivity(activity);
 		em.merge(this);
 		tx.commit();
 	    UniversityDao.instance.closeConnections(em);
@@ -204,7 +221,8 @@ public class Person implements Serializable {
 	}
 
 
-	public List<Activity> getActivitiesWithWithinRange(ActivityType type, Date beforeDate, Date afterDate) {
+/*
+	public List<Activity> getActivitiesWithWithinRange(String type, Date beforeDate, Date afterDate) {
 		List<Activity> activitiesWithType = this.getActivitiesWithType(type);
 		System.out.println(activitiesWithType);
 		
@@ -220,5 +238,6 @@ public class Person implements Serializable {
 		return activitiesWithType; 	
 		
 	}
+	*/
 }
 

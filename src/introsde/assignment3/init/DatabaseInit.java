@@ -1,14 +1,14 @@
-package introsde.assignment3.soap;
+package introsde.assignment3.init;
+
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import dao.UniversityDao;
 import introsde.assignment3.soap.model.*;
 
 public class DatabaseInit {
-	//Request#0
+
 	public static List<Activity> createActivities(){
 		List<Activity> activities = new ArrayList<Activity>();
 		Activity a1 = new Activity("Running", "Running on the track", "Trento", ActivityType.SPORT, new Date());

@@ -21,8 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-import dao.UniversityDao;
+import introsde.assignment3.dao.UniversityDao;
 
 /**
  * The persistent class for the "Activity" database table.

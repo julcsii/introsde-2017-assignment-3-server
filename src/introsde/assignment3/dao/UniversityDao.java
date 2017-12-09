@@ -1,4 +1,4 @@
-package dao;
+package introsde.assignment3.dao;
 
 
 import javax.persistence.EntityManager;
