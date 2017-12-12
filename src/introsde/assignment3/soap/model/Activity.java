@@ -1,6 +1,9 @@
 package introsde.assignment3.soap.model;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -51,19 +54,21 @@ public class Activity implements Serializable {
 	@Column(name = "type")
 	private ActivityType type;
 	
-	@Temporal(TemporalType.DATE)
 	@Column(name="startdate")
-	private Date startdate;
+	private String startdate;
 	
 	@ManyToOne
 	@JoinColumn(name="idPerson",referencedColumnName="idPerson")
 	private Person person;
+	
+	@Column(name = "rating")
+	private int rating;
 
 	public Activity() {
 	}
 	
 	
-	public Activity(String name, String description, String place, ActivityType type, Date startdate) {
+	public Activity(String name, String description, String place, ActivityType type, String startdate) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -105,6 +110,16 @@ public class Activity implements Serializable {
 		this.place = place;
 	}
 
+	public String getStartdate() {
+		return startdate;
+	}
+
+
+	public void setStartdate(String startdate) {
+		this.startdate = startdate;
+	}
+
+
 	public ActivityType getType() {
 		return type;
 	}
@@ -113,14 +128,7 @@ public class Activity implements Serializable {
 		this.type = type;
 	}
 
-	public Date getStartdate() {
-		return startdate;
-	}
-
-	public void setStartdate(Date startdate) {
-		this.startdate = startdate;
-	}
-
+	
 	@XmlTransient
 	public Person getPerson() {
 		return person;
@@ -130,6 +138,16 @@ public class Activity implements Serializable {
 		this.person = person;
 	}
 	
+	public int getRating() {
+		return rating;
+	}
+
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+
 	public static Activity getActivityById(int activityId) {
 		EntityManager em = UniversityDao.instance.createEntityManager();
 		Activity p = em.find(Activity.class, activityId);
@@ -162,10 +180,10 @@ public class Activity implements Serializable {
 		EntityManager em = UniversityDao.instance.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
-		a=em.merge(a);
+		Activity aNew=em.merge(a);
 		tx.commit();
 		UniversityDao.instance.closeConnections(em);
-	    return a;
+	    return aNew;
 	}
 	
 	public static void removeActivity(Activity a) {
@@ -177,4 +195,5 @@ public class Activity implements Serializable {
 	    tx.commit();
 	    UniversityDao.instance.closeConnections(em);
 	}
+
 }

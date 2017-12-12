@@ -1,5 +1,6 @@
 package introsde.assignment3.soap;
 
+import introsde.assignment3.init.DatabaseInit;
 import introsde.assignment3.soap.model.Activity;
 import introsde.assignment3.soap.model.Person;
 
@@ -80,7 +81,34 @@ public class UniversityImpl implements University {
 	@Override
 	public Activity updatePersonPreferences(long id, Activity activity) {
 		Person person = Person.getPersonById(id);
-		return person.getActivitiesWithId(activity.getIdActivity()).updateActivity(activity);
+		Activity original = person.getActivitiesWithId(activity.getIdActivity());
+		//System.out.println(original.getStartdate());
+		Activity newActivity = original.updateActivity(activity);
+		//System.out.println(newActivity.getStartdate());
+		return newActivity;
+	}
+	
+	@Override
+	public void databaseInit() {
+		DatabaseInit dbInit = new DatabaseInit();
+		dbInit.init();
+		return;
+		
+	}
+	
+	@Override
+	public Activity evaluatePersonPreferences(Long id, Activity activity, int value) {
+		Person person = Person.getPersonById(id);
+		Activity a = person.getActivitiesWithId(activity.getIdActivity());
+		a.setRating(value);
+		Activity updated = activity.updateActivity(a);
+		return updated;
+	}
+	
+	@Override
+	public List<Activity> getBestPersonPreference(Long id){
+		Person person = Person.getPersonById(id);
+		return person.getBestPreferences();
 	}
 
 }

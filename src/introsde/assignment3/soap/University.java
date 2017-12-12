@@ -54,14 +54,17 @@ public interface University {
     @WebResult(name="updatedActivity") 
     public Activity updatePersonPreferences(long id, Activity activity);
     
-    /*
-
-     * evaluatePersonPreferences(Long id, Activity activity, int value) => Preference 
-     * getBestPersonPreference(Long id) => List<Preference> 
-     */
-    /*
-    @WebMethod(operationName="updatePersonHealthProfile")
-    @WebResult(name="hpId") 
-    public int updatePersonHP(@WebParam(name="personId") int id, @WebParam(name="healthProfile") LifeStatus hp);
-    */
+    //Database init
+    @WebMethod(operationName="databaseInit")
+    //@WebResult(name="updatedActivity") 
+    public void databaseInit();
+    
+    @WebMethod(operationName="evaluatePersonPreferences")
+    @WebResult(name="evaluatedActivity") 
+    public Activity evaluatePersonPreferences(Long id, Activity activity, int value);
+    
+    @WebMethod(operationName="getBestPersonPreference")
+    @WebResult(name="bestPreference") 
+    public List<Activity> getBestPersonPreference(Long id);
+    
 }

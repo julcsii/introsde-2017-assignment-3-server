@@ -1,9 +1,13 @@
 package introsde.assignment3.soap.model;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Stack;
 import java.util.function.Predicate;
 
 import javax.persistence.CascadeType;
@@ -51,9 +55,8 @@ public class Person implements Serializable {
 	@Column(name="lastname")
 	private String lastname;
 
-	@Temporal(TemporalType.DATE)
 	@Column(name="birthdate")
-	private Date birthdate;
+	private String birthdate;
 	
 	
 	@OneToMany(mappedBy="person",cascade=CascadeType.ALL,fetch=FetchType.EAGER)
@@ -64,7 +67,7 @@ public class Person implements Serializable {
 	}
 	
 
-	public Person(String firstname, String lastname, Date birthdate, List<Activity> activitypreference) {
+	public Person(String firstname, String lastname, String birthdate, List<Activity> activitypreference) {
 		super();
 		this.firstname = firstname;
 		this.lastname = lastname;
@@ -73,7 +76,7 @@ public class Person implements Serializable {
 	}
 	
 	
-	public Person(String firstname, String lastname, Date birthdate) {
+	public Person(String firstname, String lastname, String birthdate) {
 		super();
 		this.firstname = firstname;
 		this.lastname = lastname;
@@ -87,14 +90,7 @@ public class Person implements Serializable {
 	}
 
 
-	public Date getBirthdate() {
-		return this.birthdate;
-	}
-
-	public void setBirthdate(Date birthdate) {
-		this.birthdate = birthdate;
-	}
-
+	
 	public long getIdPerson() {
 		return this.idPerson;
 	}
@@ -118,6 +114,16 @@ public class Person implements Serializable {
 	public void setFirstName(String firstname) {
 		this.firstname = firstname;
 	}
+
+	public String getBirthdate() {
+		return birthdate;
+	}
+
+
+	public void setBirthdate(String birthdate) {
+		this.birthdate = birthdate;
+	}
+
 
 	//@XmlTransient
 	public List<Activity> getActivityPreferences() {
@@ -163,6 +169,7 @@ public class Person implements Serializable {
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		em.persist(p);
+		
 		for(int i=0;i<p.activitypreference.size();i++) {
 			em.persist(p.activitypreference.get(i));
 		}
@@ -221,23 +228,20 @@ public class Person implements Serializable {
 	}
 
 
-/*
-	public List<Activity> getActivitiesWithWithinRange(String type, Date beforeDate, Date afterDate) {
-		List<Activity> activitiesWithType = this.getActivitiesWithType(type);
-		System.out.println(activitiesWithType);
-		
-		for (Activity activity : activitiesWithType) {
-			System.out.println(activity.getStartdate().before(beforeDate));
-			if (activity.getStartdate().before(afterDate) || activity.getStartdate().after(beforeDate)) {
-				activitiesWithType.remove(activity);
-				System.out.println("Dropped from list:" + activity);
-			} else{
-				System.out.println("Kept in list:" + activity);
-			}
-		}
-		return activitiesWithType; 	
-		
+	public List<Activity> getBestPreferences() {
+		List<Activity> activities = getActivityPreferences();
+	    Stack<Activity> stack = new Stack();
+	    stack.push(activities.get(0));
+	    for (int i =1; i< activities.size();i++) {
+	    	if (activities.get(i).getRating() >= stack.peek().getRating()){
+	    		stack.pop();
+	    		stack.push(activities.get(i));
+	    	}
+	    }
+	   return stack;
 	}
-	*/
+
+
+
 }
 
