@@ -1,7 +1,7 @@
 package introsde.assignment3.soap.endpoint;
-import introsde.assignment3.soap.UniversityImpl;
-
 import javax.xml.ws.Endpoint;
+
+import introsde.assignment3.soap.UniversityImpl;
 
 public class UniversityPublisher {
 	public static String SERVER_URL = "http://localhost";

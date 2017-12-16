@@ -21,7 +21,7 @@
        xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
     <info
         organisation="introsde"
-        module="assignment-02-server"
+        module="assignment-03-server"
         status="integration">
 	</info>
 	
